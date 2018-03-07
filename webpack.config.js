@@ -3,12 +3,12 @@
 var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
-var styleLintPlugin = require('stylelint-webpack-plugin');
 
 require('es6-promise').polyfill();
 
-module.exports = {
-  entry: './src/main.js',
+module.exports = { 
+  entry:
+    './index.js',
 
   output: {
     path: __dirname,
@@ -17,17 +17,7 @@ module.exports = {
 
   plugins: [
     // Specify the resulting CSS filename
-    new ExtractTextPlugin('dist/css/app.css'),
-
-    // Stylelint plugin
-    new styleLintPlugin({
-      configFile: '.stylelintrc',
-      context: '',
-      files: '/src/**/*.scss',
-      syntax: 'scss',
-      failOnError: false,
-      quiet: false
-    })
+    new ExtractTextPlugin('dist/css/app.css')
   ],
 
   module: {
