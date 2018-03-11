@@ -1,53 +1,63 @@
 'use strict';
 
-var path = require('path');
-var webpack = require('webpack');
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
+const path = require('path');
+const webpack = require('webpack');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 require('es6-promise').polyfill();
+
+// ------------------ Tasks ------------------
+const jsxBuilder = {
+  test: /\.js$/,
+  exclude: /node_modules/,
+  use: [
+    'babel-loader'
+  ]
+}
+
+const styleBuilder = {
+  test: /\.scss$/,
+  use: ExtractTextPlugin.extract({
+    fallback: 'style-loader',
+    use: [
+      'css-loader',
+      'postcss-loader',
+      'sass-loader'
+    ]
+  })
+}
+// ------------------ End Tasks ------------------
+
+const extractTextPlugin = new ExtractTextPlugin('dist/css/app.css')
+const bundleAnalyzerPlugin = new BundleAnalyzerPlugin({analyzerMode: 'static'})
+
+// ------------------ Plugins ------------------
+
+
+
+// ------------------ End Plugins ------------------
 
 module.exports = { 
   entry:
     './index.js',
-
   output: {
     path: __dirname,
     filename: 'dist/js/bundle.js'
   },
-
-  plugins: [
-    // Specify the resulting CSS filename
-    new ExtractTextPlugin('dist/css/app.css')
-  ],
-
   module: {
     rules: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: [
-          'babel-loader'
-        ]
-      },
-      {
-        test: /\.scss$/,
-        use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: [
-            'css-loader',
-            'postcss-loader',
-            'sass-loader'
-          ]
-        })
-      }
+      jsxBuilder,
+      styleBuilder
+      
     ]
   },
-
+  plugins: [
+    extractTextPlugin,
+    bundleAnalyzerPlugin
+  ],
   stats: {
-    // Colored output
     colors: true
   },
-
-  // Create Sourcemaps for the bundle
-  devtool: 'source-map'
+  devtool: 'inline-source-map'
 };
