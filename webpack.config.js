@@ -8,7 +8,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 require('es6-promise').polyfill();
 
 // ------------------ Tasks ------------------
-const jsxBuilder = {
+const jsLoader = {
   test: /\.js$/,
   exclude: /node_modules/,
   use: [
@@ -16,7 +16,7 @@ const jsxBuilder = {
   ]
 }
 
-const styleBuilder = {
+const scssLoader = {
   test: /\.scss$/,
   use: ExtractTextPlugin.extract({
     fallback: 'style-loader',
@@ -27,6 +27,29 @@ const styleBuilder = {
     ]
   })
 }
+
+const cssLoader = {
+  test: /\.css$/,
+  loader: 'file-loader',
+  options: {
+    name: 'css/[name].[ext]'
+  }
+};
+
+const urlLoader = {
+  test: /\.(eot|ttf|woff|woff?2)$/,
+  use: [
+    'file-loader'
+  ]
+}
+
+const imagesLoader = {
+  test: /\.(gif|png|jpe?g|svg)$/i,
+  loader: 'file-loader',
+  options: {
+    name: 'img/[hash].[ext]'
+  }
+};
 // ------------------ End Tasks ------------------
 
 const extractTextPlugin = new ExtractTextPlugin('dist/css/app.css')
@@ -47,9 +70,11 @@ module.exports = {
   },
   module: {
     rules: [
-      jsxBuilder,
-      styleBuilder
-      
+      jsLoader,
+      scssLoader,
+      cssLoader,
+      urlLoader,
+      imagesLoader
     ]
   },
   plugins: [
