@@ -17,16 +17,31 @@ const jsLoader = {
 }
 
 const scssLoader = {
-  test: /\.scss$/,
-  use: ExtractTextPlugin.extract({
+  test: /\.s(a|c)ss$/,
+  use: ExtractCssChunks.extract({
     fallback: 'style-loader',
     use: [
-      'css-loader',
-      'postcss-loader',
-      'sass-loader'
+      {
+        loader: 'css-loader',
+        options: {
+          importLoaders: 10,
+          sourceMap: true,
+          minimize: false
+        }
+      },
+      {
+        loader: 'postcss-loader'
+      },
+      { loader: 'sass-loader' },
+      {
+        loader: 'sass-resources-loader',
+        options: {
+          resources: ['./src/styles/variables/variables.scss', './src/styles/mixins/mixins.scss']
+        }
+      }
     ]
   })
-}
+};
 
 const cssLoader = {
   test: /\.css$/,
@@ -37,7 +52,7 @@ const cssLoader = {
 };
 
 const urlLoader = {
-  test: /\.(eot|ttf|woff|woff?2)$/,
+  test: /\.(eot|ttf|woff?2)$/,
   use: [
     'file-loader'
   ]
@@ -50,14 +65,20 @@ const imagesLoader = {
     name: 'img/[hash].[ext]'
   }
 };
+
+const jsonLoader = {
+  test: /\.json$/,
+  loader: 'json-loader',
+  exclude: /(node_modules)/
+};
+
 // ------------------ End Tasks ------------------
 
-const extractTextPlugin = new ExtractTextPlugin('dist/css/app.css')
-const bundleAnalyzerPlugin = new BundleAnalyzerPlugin({analyzerMode: 'static'})
 
 // ------------------ Plugins ------------------
 
-
+const extractTextPlugin = new ExtractTextPlugin('dist/css/app.css')
+const bundleAnalyzerPlugin = new BundleAnalyzerPlugin({analyzerMode: 'static'})
 
 // ------------------ End Plugins ------------------
 
@@ -74,7 +95,8 @@ module.exports = {
       scssLoader,
       cssLoader,
       urlLoader,
-      imagesLoader
+      imagesLoader,
+      jsonLoader
     ]
   },
   plugins: [
